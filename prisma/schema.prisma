@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  nome       String   @db.VarChar(45)
+  email      String   @db.VarChar(45)
+  senha      String   @db.VarChar(60)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  reviews    Review[]
+  @@map("Usuario")
+  Comentarios Comentarios[]
+  Denuncia Denuncia[]
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  titulo     String   @db.VarChar()
+  conteudo   String?  @db.VarChar()
+  nota       Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  usuarioId     Int?
+  livros_id  Int?
+
+  usuario       Usuario?    @relation(fields: [usuarioId], references: [id])
+  livro      Livros?  @relation(fields: [livros_id], references: [id])
+
+  @@map("review")
+  Comentarios Comentarios[]
+}
+
+model Livros {
+  id              Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(60)
+  dataLancamento  DateTime
+  foto            String
+  descricao       String    @db.VarChar()
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  genero          Genero? 
+  autor_id        Int?
+  autor           Autores?   @relation(fields: [autor_id], references: [id])
+  reviews         Review[]
+
+  @@map("livros")
+}
+
+model Autores {
+  id      Int     @id @default(autoincrement())
+  nome    String  @db.VarChar(45)
+  livros  Livros[]
+
+  @@map("autores")
+}
+
+model Admin {
+  id     String   @db.VarChar(36) @id @default(uuid())
+  nome   String  @db.VarChar(45)
+  email  String  @db.VarChar(60)
+  senha  String  @db.VarChar(100)
+  log    String? @db.VarChar(100)
+  nivel         Int      @db.SmallInt @default(2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  logs          Log[]
+  denuncias Denuncia[]
+  @@map("admin")
+}
+
+model Log {
+  id            Int         @id @default(autoincrement())
+  admin         Admin       @relation(fields: [adminId], references: [id])
+  adminId       String
+  descricao     String      @db.VarChar(60)
+  complemento   String      @db.VarChar(200)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  @@map("logs")
+}
+
+model Denuncia {
+  id           Int            @id @default(autoincrement())
+  comentarioId Int
+  usuarioId    Int
+  motivo       String         @db.VarChar(200)
+  status       StatusDenuncia @default(PENDENTE)
+  createdAt    DateTime       @default(now())
+  resolvidoPor String?           // id do admin que resolveu, opcional
+
+  comentario   Comentarios    @relation(fields: [comentarioId], references: [id])
+  usuario      Usuario        @relation(fields: [usuarioId], references: [id])
+  admin        Admin?         @relation(fields: [resolvidoPor], references: [id])
+
+  @@map("denuncias")
+}
+
+enum StatusDenuncia {
+  PENDENTE
+  AVALIADA
+  IGNORADA
+  RESOLVIDA
+}
+
+enum Genero {
+  ACAO
+  DRAMA
+  FICCAO
+  TERROR
+  ROMANCE
+  COMEDIA
+}
+
+model Comentarios {
+  id          Int       @id @default(autoincrement())
+  usuarioId   Int 
+  reviewId    Int
+  conteudo    String    @db.VarChar(200)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  usuario     Usuario?    @relation(fields: [usuarioId], references: [id])
+  review      Review?     @relation(fields: [reviewId], references: [id])
+  @@map("comentarios")
+  Denuncia Denuncia[]
+}
