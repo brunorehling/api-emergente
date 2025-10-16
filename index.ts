@@ -32,6 +32,4 @@ app.get('/', (req, res) => {
   res.send('API: Revenda de Veículos')
 })
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta: ${port}`)
-})
+export default app
