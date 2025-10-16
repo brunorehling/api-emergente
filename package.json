@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "node dist/index.js"
+    "dev": "npx ts-node-dev --respawn index.ts",
+    "vercel-build": "npx prisma migrate deploy",
+    "postinstall": "prisma generate"
+
   },
   "keywords": [],
   "author": "",
