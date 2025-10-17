@@ -247,34 +247,26 @@ router.post("/:id/comentarios", async (req, res) => {
   }
 })
 
-router.delete("/:reviewId/comentarios/:comentarioId", async (req, res) => {
-  const reviewId = Number(req.params.reviewId);
-  const comentarioId = Number(req.params.comentarioId);
-
-  if (isNaN(reviewId) || isNaN(comentarioId)) {
-    return res.status(400).json({ error: "IDs inválidos" });
-  }
-
+// Supondo que você tenha algo como /denuncias
+router.get("/", async (req, res) => {
   try {
-    const comentario = await prisma.comentarios.findUnique({
-      where: { id: comentarioId },
+    const denuncias = await prisma.denuncia.findMany({
+      include: {
+        usuario: true,
+        comentario: {
+          include: {
+            usuario: true,   // já tinha
+            review: true,    // <- adiciona isso pra trazer o review junto
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!comentario || comentario.reviewId !== reviewId) {
-      return res.status(404).json({ error: "Comentário não encontrado para esta review" });
-    }
-
-    await prisma.comentarios.delete({
-      where: { id: comentarioId },
-    });
-
-    res.status(200).json({ message: "Comentário deletado com sucesso" });
+    res.status(200).json(denuncias);
   } catch (error) {
-    console.error("Erro ao deletar comentário:", error);
-    res.status(500).json({
-      error: "Erro ao deletar comentário",
-      details: error instanceof Error ? error.message : error,
-    });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar denúncias", details: error });
   }
 });
 
