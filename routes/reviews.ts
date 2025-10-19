@@ -120,6 +120,11 @@ router.post("/", async (req, res) => {
 
   const { titulo, conteudo, nota, usuarioId, livros_id } = valida.data
 
+  // Checagem para garantir que não seja undefined
+  if (usuarioId === undefined || livros_id === undefined) {
+    return res.status(400).json({ error: "usuarioId e livros_id são obrigatórios" });
+  }
+
   try {
     const nova = await prisma.review.create({
       data: { titulo, conteudo, nota, usuarioId, livros_id },
@@ -130,6 +135,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Erro ao criar review", details: error })
   }
 })
+
 
 // PUT atualizar review
 router.put("/:id", async (req, res) => {

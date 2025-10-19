@@ -33,11 +33,11 @@ model Review {
   nota       Int      @default(1)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  usuarioId     Int?
-  livros_id  Int?
+  usuarioId  Int
+  livros_id  Int
 
-  usuario       Usuario?    @relation(fields: [usuarioId], references: [id])
-  livro      Livros?  @relation(fields: [livros_id], references: [id])
+  usuario       Usuario    @relation(fields: [usuarioId], references: [id])
+  livro      Livros  @relation(fields: [livros_id], references: [id])
 
   @@map("review")
   Comentarios Comentarios[]
