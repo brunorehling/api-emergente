@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "npx ts-node-dev --respawn index.ts",
-    "vercel-build": "npx prisma migrate deploy",
+    "vercel-build": "tsc && vite build",
     "postinstall": "prisma generate"
 
   },
