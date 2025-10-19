@@ -15,10 +15,6 @@ ALTER TABLE "review" DROP CONSTRAINT "review_usuarioId_fkey";
 ALTER TABLE "review" ALTER COLUMN "usuarioId" SET NOT NULL,
 ALTER COLUMN "livros_id" SET NOT NULL;
 
-UPDATE "review" 
-SET "usuarioId" = 1, "livros_id" = 2
-WHERE "usuarioId" IS NULL OR "livros_id" IS NULL;
-
 -- AddForeignKey
 ALTER TABLE "review" ADD CONSTRAINT "review_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
