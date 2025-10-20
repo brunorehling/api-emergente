@@ -20,12 +20,12 @@ CREATE TABLE "Usuario" (
 CREATE TABLE "review" (
     "id" SERIAL NOT NULL,
     "titulo" VARCHAR NOT NULL,
-    "conteudo" VARCHAR(255),
+    "conteudo" VARCHAR,
     "nota" INTEGER NOT NULL DEFAULT 1,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "usuarioId" INTEGER,
-    "livros_id" INTEGER,
+    "usuarioId" INTEGER NOT NULL,
+    "livros_id" INTEGER NOT NULL,
 
     CONSTRAINT "review_pkey" PRIMARY KEY ("id")
 );
@@ -35,9 +35,8 @@ CREATE TABLE "livros" (
     "id" SERIAL NOT NULL,
     "nome" VARCHAR(60) NOT NULL,
     "dataLancamento" TIMESTAMP(3) NOT NULL,
-    "nota" INTEGER NOT NULL,
     "foto" TEXT NOT NULL,
-    "descricao" VARCHAR(200) NOT NULL,
+    "descricao" VARCHAR NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "genero" "Genero",
@@ -88,6 +87,7 @@ CREATE TABLE "denuncias" (
     "motivo" VARCHAR(200) NOT NULL,
     "status" "StatusDenuncia" NOT NULL DEFAULT 'PENDENTE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "resolvidoPor" TEXT,
 
     CONSTRAINT "denuncias_pkey" PRIMARY KEY ("id")
 );
@@ -105,10 +105,10 @@ CREATE TABLE "comentarios" (
 );
 
 -- AddForeignKey
-ALTER TABLE "review" ADD CONSTRAINT "review_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "review" ADD CONSTRAINT "review_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "review" ADD CONSTRAINT "review_livros_id_fkey" FOREIGN KEY ("livros_id") REFERENCES "livros"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "review" ADD CONSTRAINT "review_livros_id_fkey" FOREIGN KEY ("livros_id") REFERENCES "livros"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "livros" ADD CONSTRAINT "livros_autor_id_fkey" FOREIGN KEY ("autor_id") REFERENCES "autores"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -121,6 +121,9 @@ ALTER TABLE "denuncias" ADD CONSTRAINT "denuncias_comentarioId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "denuncias" ADD CONSTRAINT "denuncias_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "denuncias" ADD CONSTRAINT "denuncias_resolvidoPor_fkey" FOREIGN KEY ("resolvidoPor") REFERENCES "admin"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comentarios" ADD CONSTRAINT "comentarios_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
