@@ -128,7 +128,7 @@ model Comentarios {
   id          Int       @id @default(autoincrement())
   usuarioId   Int 
   reviewId    Int
-  conteudo    String    @db.VarChar(200)
+  conteudo    String    @db.VarChar()
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
