@@ -7,7 +7,7 @@ const router = Router()
 
 const reviewSchema = z.object({
   titulo: z.string().min(1, "Título é obrigatório"),
-  conteudo: z.string().max(500).optional(),
+  conteudo: z.string().max(1000).optional(),
   nota: z.number().int().min(1, "a nota deve ser no mínimo 1").max(5, "A nota deve ser no maximo 5"),
   usuarioId: z.number().int().optional(),
   livros_id: z.number().int().optional(),
